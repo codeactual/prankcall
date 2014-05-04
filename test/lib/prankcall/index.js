@@ -17,7 +17,6 @@ describe('Prankcall', function() {
   'use strict';
 
   beforeEach(function() {
-    this.prankcall = new prankcall.create();
   });
 
   describe('#method', function() {

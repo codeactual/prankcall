@@ -5,8 +5,6 @@
   "version": "0.1.0",
   "keywords": [],
   "dependencies": {
-    "visionmedia/configurable.js": "f87ca5f",
-    "codeactual/extend": "0.1.0",
     "codeactual/require-component": "0.1.0"
   },
   "main": "lib/component/main.js",
