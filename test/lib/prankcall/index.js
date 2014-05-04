@@ -1,17 +1,4 @@
-/*jshint expr:true*/
-var sinon = require('sinon');
-var chai = require('chai');
-var fs = require('fs');
-var util = require('util');
-var sprintf = util.format;
-
-var should = chai.should();
-chai.config.includeStack = true;
-chai.use(require('sinon-chai'));
-
-var prankcall = require('../../..');
-
-require('sinon-doublist')(sinon, 'mocha');
+var T = require('../..');
 
 describe('Prankcall', function() {
   'use strict';
@@ -19,9 +6,30 @@ describe('Prankcall', function() {
   beforeEach(function() {
   });
 
-  describe('#method', function() {
-    it('should do something', function() {
-      (true).should.be.ok;
-    });
+  it.skip('should use default sleep', function() {
+  });
+
+  it.skip('should use custom sleep', function() {
+  });
+
+  it.skip('should use default timeout', function() {
+  });
+
+  it.skip('should use custom timeout', function() {
+  });
+
+  it.skip('should use no request params by default', function() {
+  });
+
+  it.skip('should use custom request params', function() {
+  });
+
+  it.skip('should use default backoff options', function() {
+  });
+
+  it.skip('should use custom backoff options', function() {
+  });
+
+  it.skip('should resume queue after backoff ends', function() {
   });
 });
