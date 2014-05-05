@@ -19,7 +19,9 @@
     "type": "git",
     "url": "https://github.com/codeactual/prankcall.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "retry": "^0.6.0"
+  },
   "devDependencies": {
     "apidox": "^0.3.6",
     "chai": "^1.9.1",
@@ -34,7 +36,8 @@
     "node-lib-grunt": "git://github.com/codeactual/node-lib-grunt.git",
     "sinon": "^1.9.1",
     "sinon-chai": "^2.5.0",
-    "sinon-doublist": "^0.5.1"
+    "sinon-doublist": "^0.5.1",
+    "co-mocha": "0.0.2"
   },
   "scripts": {
     "test": "grunt test"
