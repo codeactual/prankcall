@@ -5,17 +5,23 @@ describe('Prankcall', function(testDone) {
 
   beforeEach(function() {
     var test = this;
+    var pos = 0;
 
     this.produced = [1, 2, 3];
+
     this.producer = function *() {
-      for (var pos = 0; pos < test.produced.length; pos++) {
-        yield test.produced[pos];
-      }
+      yield test.produced[pos++];
+    };
+    this.contIf = function(prod) {
+      return pos < test.produced.length;
+    };
+    this.producerWithError = function *() {
+      throw new Error('failed to produce');
     };
   });
 
   it('should emit producer results via #next', function() {
-    var gen = T.prankcall.start(this.producer);
+    var gen = T.prankcall.start(this.producer, this.contIf);
     var prod = gen.next();
     prod.value.should.equal(this.produced[0]);
     prod = gen.next();
@@ -24,6 +30,16 @@ describe('Prankcall', function(testDone) {
     prod.value.should.equal(this.produced[2]);
     prod = gen.next();
     prod.done.should.be.ok;
+  });
+
+  it('should propagate producer exception', function() {
+    var gen = T.prankcall.start(this.producerWithError, this.contIf);
+    (function() {
+      gen.next();
+    }).should.Throw(/failed to produce/);
+  });
+
+  it.skip('should handle error thrown from producer', function() {
   });
 
   it.skip('should use default timeout', function *() {
@@ -42,8 +58,9 @@ describe('Prankcall', function(testDone) {
     yield true;
   });
 
-  it.skip('should use default backoff options', function *() {
-    yield true;
+  it.skip('should use default backoff options', function() {
+    // Make PrankCall class an event emitter
+    // Use events to count the retries
   });
 
   it.skip('should use custom backoff options', function *() {
