@@ -48,21 +48,24 @@ describe('Prankcall', function(testDone) {
     this.receiveCount = 0;
   });
 
-  it('should provide receive with all results', function *() {
+  it('should call #send until #receive returns false', function *() {
     this.prankcall.receive(this.receive);
     yield this.prankcall.send(this.send);
     this.actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
 
-  it('should propagate send exception', function() {
-    this.prankcall.continueIf(this.receive);
-    var gen = this.prankcall.start(this.sendWithError);
-    //(function() {
-      gen.next();
-    //}).should.Throw(/failed to produce/);
+  it('should call #send only once if #receive returns undefined', function *() {
+    this.prankcall.receive(this.receiveWithoutReturn);
+    yield this.prankcall.send(this.send);
+    this.actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
   });
 
-  it.skip('should handle error thrown from send', function() {
+  it.skip('should propagate #send exception', function *() {
+    yield true;
+  });
+
+  it.skip('should handle error thrown from send', function *() {
+    yield true;
   });
 
   it.skip('should use default timeout', function *() {
