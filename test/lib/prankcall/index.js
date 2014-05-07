@@ -1,52 +1,48 @@
 var T = require('../..');
+var co = require('co');
+var sleep = T.prankcall.Prankcall.sleep;
 
 describe('Prankcall', function(testDone) {
   'use strict';
 
   beforeEach(function() {
     var test = this;
-    var pos = 0;
 
-    this.produced = [1, 2, 3];
-
-    this.producer = function *() {
-      yield test.produced[pos++];
+    this.actualCallReturn = [];
+    this.send = function *() {
+      yield sleep(1);
+      return test.expectedCallReturn[test.receiveCount];
     };
-    this.contIf = function(prod) {
-      return pos < test.produced.length;
+    this.receive = function *(callReturn) {
+      yield sleep(1);
+      test.actualCallReturn.push(callReturn);
+      return test.receiveCount++ < test.expectedCallReturn.length - 1;
     };
-    this.producerWithError = function *() {
-      if (true) { // Hide the `throw` from jshint
-        throw new Error('failed to produce');
-      }
-      yield 'never happens';
+    this.receiveWithoutReturn = function *(callReturn) {
+      test.actualCallReturn.push(callReturn);
+      yield sleep(1);
     };
-
-    this.prankcall = T.prankcall.create();
+    this.receiveCount = 0;
   });
 
-  it('should emit producer results via #next', function() {
-    this.prankcall.continueIf(this.contIf);
-    var gen = this.prankcall.start(this.producer);
-    var prod = gen.next();
-    prod.value.should.equal(this.produced[0]);
-    prod = gen.next();
-    prod.value.should.equal(this.produced[1]);
-    prod = gen.next();
-    prod.value.should.equal(this.produced[2]);
-    prod = gen.next();
-    prod.done.should.be.ok;
+  it('should provide receive with all results', function(testDone) {
+    co(function *() {
+      this.prankcall.receive(this.receive);
+      yield this.prankcall.send(this.send);
+      this.actualCallReturn.should.deep.equal(this.expectedCallReturn);
+      testDone();
+    }).call(this);
   });
 
-  it('should propagate producer exception', function() {
-    this.prankcall.continueIf(this.contIf);
-    var gen = this.prankcall.start(this.producerWithError);
-    (function() {
+  it('should propagate send exception', function() {
+    this.prankcall.continueIf(this.receive);
+    var gen = this.prankcall.start(this.sendWithError);
+    //(function() {
       gen.next();
-    }).should.Throw(/failed to produce/);
+    //}).should.Throw(/failed to produce/);
   });
 
-  it.skip('should handle error thrown from producer', function() {
+  it.skip('should handle error thrown from send', function() {
   });
 
   it.skip('should use default timeout', function *() {
