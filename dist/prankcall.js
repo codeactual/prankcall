@@ -44,6 +44,49 @@
             };
         };
     });
+    require.register("codeactual~extend@0.1.0", function(exports, module) {
+        module.exports = function extend(object) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            for (var i = 0, source; source = args[i]; i++) {
+                if (!source) continue;
+                for (var property in source) {
+                    object[property] = source[property];
+                }
+            }
+            return object;
+        };
+    });
+    require.register("visionmedia~configurable.js@f87ca5f", function(exports, module) {
+        module.exports = function(obj) {
+            obj.settings = {};
+            obj.set = function(name, val) {
+                if (1 == arguments.length) {
+                    for (var key in name) {
+                        this.set(key, name[key]);
+                    }
+                } else {
+                    this.settings[name] = val;
+                }
+                return this;
+            };
+            obj.get = function(name) {
+                return this.settings[name];
+            };
+            obj.enable = function(name) {
+                return this.set(name, true);
+            };
+            obj.disable = function(name) {
+                return this.set(name, false);
+            };
+            obj.enabled = function(name) {
+                return !!this.get(name);
+            };
+            obj.disabled = function(name) {
+                return !this.get(name);
+            };
+            return obj;
+        };
+    });
     require.register("prankcall", function(exports, module) {
         module.exports = require("codeactual~require-component@0.1.0")(require);
     });

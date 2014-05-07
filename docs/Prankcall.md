@@ -8,6 +8,8 @@ _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 - <a name="toc_exportscreate"></a>[exports.create](#exportscreate)
 - <a name="toc_exportsextendext"></a>[exports.extend](#exportsextendext)
 - <a name="toc_prankcall"></a>[Prankcall](#prankcall)
+- <a name="toc_prankcallprototypestartoptions"></a><a name="toc_prankcallprototype"></a>[Prankcall.prototype.start](#prankcallprototypestartoptions)
+- <a name="toc_prankcalldefaultcontinueif"></a>[prankCallDefaultContinueIf](#prankcalldefaultcontinueif)
 
 <a name="exports"></a>
 
@@ -49,16 +51,38 @@ _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 
 ```js
 var prankcall = Prankcall.create();
-prankcall.set('...', ...);
+prankcall.producer(generator).start()
 ```
 
-**Configuration:**
-
-- `{type} [...=default]` ...
-
-**Properties:**
-
 - `{type} ...` ...
+
+<sub>Go: [TOC](#tableofcontents)</sub>
+
+<a name="prankcallprototype"></a>
+
+# Prankcall.prototype.start(options)
+
+> @param {function} producer
+
+**Parameters:**
+
+- `{object} options`
+  - `{number} [timeout=2000]`
+  - `{number} [retries=10]` For `node-retry`
+  - `{number} [factor=2]` For `node-retry`
+  - `{number} [maxTimeout=Infinity]` For `node-retry`
+  - `{number} [randomize=false]` For `node-retry`
+
+**See:**
+
+- [node-retry](https://github.com/tim-kos/node-retry#api)
+
+<sub>Go: [TOC](#tableofcontents) | [Prankcall.prototype](#toc_prankcallprototype)</sub>
+
+# prankCallDefaultContinueIf()
+
+> Err on the side of halting the generator after one execution
+rather than accidentally running it forever.
 
 <sub>Go: [TOC](#tableofcontents)</sub>
 

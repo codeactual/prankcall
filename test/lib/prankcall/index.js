@@ -16,12 +16,18 @@ describe('Prankcall', function(testDone) {
       return pos < test.produced.length;
     };
     this.producerWithError = function *() {
-      throw new Error('failed to produce');
+      if (true) { // Hide the `throw` from jshint
+        throw new Error('failed to produce');
+      }
+      yield 'never happens';
     };
+
+    this.prankcall = T.prankcall.create();
   });
 
   it('should emit producer results via #next', function() {
-    var gen = T.prankcall.start(this.producer, this.contIf);
+    this.prankcall.continueIf(this.contIf);
+    var gen = this.prankcall.start(this.producer);
     var prod = gen.next();
     prod.value.should.equal(this.produced[0]);
     prod = gen.next();
@@ -33,7 +39,8 @@ describe('Prankcall', function(testDone) {
   });
 
   it('should propagate producer exception', function() {
-    var gen = T.prankcall.start(this.producerWithError, this.contIf);
+    this.prankcall.continueIf(this.contIf);
+    var gen = this.prankcall.start(this.producerWithError);
     (function() {
       gen.next();
     }).should.Throw(/failed to produce/);
