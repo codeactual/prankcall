@@ -3,7 +3,7 @@ var Prankcall = T.prankcall.Prankcall;
 var sleep = Prankcall.sleep;
 var retry = require('retry');
 
-describe('Prankcall', function(testDone) {
+describe('Prankcall - Lib', function() {
   'use strict';
 
   beforeEach(function() {
