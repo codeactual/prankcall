@@ -10,6 +10,7 @@
     "generator",
     "yield",
     "es6",
+    "harmony",
     "timeout",
     "sleep",
     "backoff",
