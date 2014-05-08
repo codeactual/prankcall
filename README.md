@@ -74,8 +74,8 @@ co(function *() {
 
 ## API
 
-[Documentation](docs/Prankcall.md)
-[Events](docs/events.md)
+- [Documentation](docs/Prankcall.md)
+- [Events](docs/events.md)
 
 ## License
 
