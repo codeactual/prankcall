@@ -12,9 +12,10 @@ describe('Prankcall', function(testDone) {
 
     // To force retries
     this.sendErrMsg = 'test send error';
+    this.sendErr = new Error(this.sendErrMsg);
     this.sendWithError = function *() {
       if (true) { // Hide the `throw` from jshint
-        throw new Error(test.sendErrMsg);
+        throw test.sendErr;
       }
       yield 'make jshint happy';
     };
@@ -75,42 +76,89 @@ describe('Prankcall', function(testDone) {
     } catch (err) {
       actual = err;
     }
-    actual.message.should.equal(this.sendErrMsg);
+    actual.should.equal(this.sendErr);
   });
 
   it('should emit event: call', function *() {
     var actualStats;
+
     function onCall(stats) {
       actualStats = stats;
     }
     this.prankcall.on('call', onCall);
+
     yield this.prankcall.send(this.send);
+
     actualStats.should.deep.equal({calls: 0});
   });
 
   it('should emit event: return', function *() {
     var actualStats;
     var actualCallReturn;
-    function onCall(stats, callReturn) {
+
+    function onReturn(stats, callReturn) {
       actualStats = stats;
       actualCallReturn = callReturn;
     }
-    this.prankcall.on('return', onCall);
+
+    this.prankcall.on('return', onReturn);
+
     yield this.prankcall.send(this.send);
+
     actualStats.should.deep.equal({calls: 1});
     actualCallReturn.should.equal(this.expectedCallReturn[0]);
   });
 
-  it.skip('should emit event: retry', function *() {
-    // Payload should include
-    // - attempt #
-    // - retries used
-    // - retries left
-    // - error
-    yield true;
+  it('should emit event: retry', function *() {
+    var actualDetails = [];
+
+    function onRetry(details) {
+      actualDetails.push(details);
+    }
+
+    this.prankcall.on('retry', onRetry);
+    this.prankcall.retry({retries: 3});
+
+    var caughtErr;
+    try {
+      yield this.prankcall.send(this.sendWithError);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    caughtErr.should.equal(this.sendErr);
+    actualDetails.length.should.equal(3);
+    actualDetails[0].should.deep.equal({
+      backoffTime: 1000,
+      currentRetries: 1,
+      err: this.sendErr,
+      remainRetries: 2,
+      totalRetries: 1
+    });
+    actualDetails[1].should.deep.equal({
+      backoffTime: 2000,
+      currentRetries: 2,
+      err: this.sendErr,
+      remainRetries: 1,
+      totalRetries: 2
+    });
+    actualDetails[2].should.deep.equal({
+      backoffTime: 4000,
+      currentRetries: 3,
+      err: this.sendErr,
+      remainRetries: 0,
+      totalRetries: 3
+    });
   });
 
   it.skip('should emit event: sleep', function *() {
+    // Payload should include
+    // - attempt #
+    // - sleep duration
+    yield true;
+  });
+
+  it.skip('should emit event: fail', function *() {
     // Payload should include
     // - attempt #
     // - sleep duration
