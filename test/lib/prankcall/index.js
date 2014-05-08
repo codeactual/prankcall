@@ -22,8 +22,11 @@ describe('Prankcall', function(testDone) {
     this.prankcall = T.prankcall.create();
     this.prankcall.set('sleep', 1);
 
+    this.sendSpy = this.spy();
+
     // Stand-in for something async like an HTTP request
     this.send = function *() {
+      test.sendSpy();
       yield sleep(1);
       return test.expectedCallReturn[test.receiveCount];
     };
@@ -54,7 +57,12 @@ describe('Prankcall', function(testDone) {
     this.actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
 
-  it('should call #send only once if #receive returns undefined', function *() {
+  it('should call #send only once if using default #receive', function *() {
+    yield this.prankcall.send(this.send);
+    this.sendSpy.should.have.been.called.once;
+  });
+
+  it('should call #send only once if custom #receive returns undefined', function *() {
     this.prankcall.receive(this.receiveWithoutReturn);
     yield this.prankcall.send(this.send);
     this.actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
