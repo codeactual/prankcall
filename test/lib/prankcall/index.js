@@ -8,7 +8,7 @@ describe('Prankcall', function(testDone) {
     var test = this;
 
     // `this.send` will return one element at a time
-    this.expectedCallReturn = [1, 2, 3];
+    this.expectedCallReturn = ['one', 2, {three: true}];
 
     // To force retries
     this.sendErrMsg = 'test send error';
@@ -88,11 +88,17 @@ describe('Prankcall', function(testDone) {
     actualStats.should.deep.equal({calls: 0});
   });
 
-  it.skip('should emit event: return', function *() {
-    // Payload should include
-    // - attempt #
-    // - call return?
-    yield true;
+  it('should emit event: return', function *() {
+    var actualStats;
+    var actualCallReturn;
+    function onCall(stats, callReturn) {
+      actualStats = stats;
+      actualCallReturn = callReturn;
+    }
+    this.prankcall.on('return', onCall);
+    yield this.prankcall.send(this.send);
+    actualStats.should.deep.equal({calls: 1});
+    actualCallReturn.should.equal(this.expectedCallReturn[0]);
   });
 
   it.skip('should emit event: retry', function *() {

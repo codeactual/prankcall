@@ -13,5 +13,15 @@ prankcall.on('retry', cb);
 
 Receives arguments:
 
-- `{object} stats`
+- `{object}` Stats
   - `{number} calls` Total number of successful calls performed in `send`
+
+## `return`
+
+> Fires on after every successful call performed by `send`.
+
+Receives arguments:
+
+- `{object}` Stats
+  - `{number} calls` Total number of successful calls performed in `send`
+- `{mixed}` Value returned by the generator passed to `send`
