@@ -1,4 +1,4 @@
-Call a generator with backoff and other customization
+Call a node.js generator with backoff and other customization
 
 _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 

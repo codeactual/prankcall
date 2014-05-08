@@ -1,6 +1,6 @@
 # prankcall
 
-Call a generator with backoff and other customization
+Call a node.js generator with backoff and other customization
 
 - Configure exponential backoff via [node-retry](https://github.com/tim-kos/node-retry#api) options
 - Call the generator just once or repeatedly based on custom logic
