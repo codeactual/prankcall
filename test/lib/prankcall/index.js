@@ -78,10 +78,44 @@ describe('Prankcall', function(testDone) {
     actual.message.should.equal(this.sendErrMsg);
   });
 
-  it.skip('should recover from sparse #send exceptions', function *() {
-    // success + 2 failures + success + failure + success
-    // Verify collected call return values
+  it('should emit event: call', function *() {
+    var actualStats;
+    function onCall(stats) {
+      actualStats = stats;
+    }
+    this.prankcall.on('call', onCall);
+    yield this.prankcall.send(this.send);
+    actualStats.should.deep.equal({calls: 0});
+  });
+
+  it.skip('should emit event: return', function *() {
+    // Payload should include
+    // - attempt #
+    // - call return?
     yield true;
+  });
+
+  it.skip('should emit event: retry', function *() {
+    // Payload should include
+    // - attempt #
+    // - retries used
+    // - retries left
+    // - error
+    yield true;
+  });
+
+  it.skip('should emit event: sleep', function *() {
+    // Payload should include
+    // - attempt #
+    // - sleep duration
+    yield true;
+  });
+
+  it.skip('should recover from sparse #send exceptions', function *() {
+    this.prankcall.retry({retries: 3});
+    var successSequence = [true, false, false, true, false, true];
+    yield this.prankcall.send(this.sendWithError);
+    this.actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
   });
 
   it.skip('should use default retry options', function *() {
@@ -109,36 +143,6 @@ describe('Prankcall', function(testDone) {
   });
 
   it.skip('should use custom sleep', function *() {
-    yield true;
-  });
-
-  it.skip('should emit event: call', function *() {
-    // Payload should include
-    // - attempt #
-    // Emit right before yielding to sender, outside try/catch
-    yield true;
-  });
-
-  it.skip('should emit event: return', function *() {
-    // Payload should include
-    // - attempt #
-    // - call return?
-    yield true;
-  });
-
-  it.skip('should emit event: retry', function *() {
-    // Payload should include
-    // - attempt #
-    // - retries used
-    // - retries left
-    // - error
-    yield true;
-  });
-
-  it.skip('should emit event: sleep', function *() {
-    // Payload should include
-    // - attempt #
-    // - sleep duration
     yield true;
   });
 });

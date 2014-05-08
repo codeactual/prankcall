@@ -18,6 +18,7 @@ Call a function periodically with backoff and other customization
 ## API
 
 [Documentation](docs/Prankcall.md)
+[Events](docs/events.md)
 
 ## License
 

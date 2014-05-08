@@ -51,7 +51,7 @@ _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 **Usage:**
 
 ```js
-var prankcall = Prankcall.create();
+var prankcall = require('prankcall').create();
 prankcall.retry({retries: 3}); // `retry` options
 
 var send = function *() {
