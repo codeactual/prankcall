@@ -11,10 +11,10 @@ describe('Prankcall', function(testDone) {
     this.expectedCallReturn = [1, 2, 3];
 
     // To force retries
-    this.generatorErrMsg = 'test generator error';
-    this.generatorWithError = function *() {
+    this.sendErrMsg = 'test send error';
+    this.sendWithError = function *() {
       if (true) { // Hide the `throw` from jshint
-        throw new Error(test.generatorErrMsg);
+        throw new Error(test.sendErrMsg);
       }
       yield 'make jshint happy';
     };
@@ -68,13 +68,23 @@ describe('Prankcall', function(testDone) {
     this.actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
   });
 
-  it.skip('should propagate #send exception if retry disabled', function *() {
-    yield true;
+  it('should propagate #send exception if retries exhausted', function *() {
+    var actual;
+    try {
+      yield this.prankcall.send(this.sendWithError);
+    } catch (err) {
+      actual = err;
+    }
+    actual.message.should.equal(this.sendErrMsg);
   });
 
   it.skip('should recover from sparse #send exceptions', function *() {
     // success + 2 failures + success + failure + success
     // Verify collected call return values
+    yield true;
+  });
+
+  it.skip('should use default retry options', function *() {
     yield true;
   });
 
