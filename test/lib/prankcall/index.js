@@ -28,42 +28,42 @@ describe('Prankcall', function(testDone) {
     this.send = function *() {
       test.sendSpy();
       yield sleep(1);
-      return test.expectedCallReturn[test.receiveCount];
+      return test.expectedCallReturn[test.recvCount];
     };
 
-    // Store values passed to `this.receive`
+    // Store values passed to `this.recv`
     this.actualCallReturn = [];
 
     // Stand-in for something async, ex. write `this.send` results to DB
-    this.receive = function *(callReturn) {
+    this.recv = function *(callReturn) {
       yield sleep(1);
       test.actualCallReturn.push(callReturn);
-      return test.receiveCount++ < test.expectedCallReturn.length - 1;
+      return test.recvCount++ < test.expectedCallReturn.length - 1;
     };
 
     // To verify devs can omit the final `return` safely (no infinite loop)
-    this.receiveWithoutReturn = function *(callReturn) {
+    this.recvWithoutReturn = function *(callReturn) {
       test.actualCallReturn.push(callReturn);
       yield sleep(1);
     };
 
     // Cursor used to read `this.expectedCallReturn` one element at a time
-    this.receiveCount = 0;
+    this.recvCount = 0;
   });
 
-  it('should call #send until #receive returns false', function *() {
-    this.prankcall.recv(this.receive);
+  it('should call #send until #recv returns false', function *() {
+    this.prankcall.recv(this.recv);
     yield this.prankcall.send(this.send);
     this.actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
 
-  it('should call #send only once if using default #receive', function *() {
+  it('should call #send only once if using default #recv', function *() {
     yield this.prankcall.send(this.send);
     this.sendSpy.should.have.been.called.once;
   });
 
-  it('should call #send only once if custom #receive returns undefined', function *() {
-    this.prankcall.recv(this.receiveWithoutReturn);
+  it('should call #send only once if custom #recv returns undefined', function *() {
+    this.prankcall.recv(this.recvWithoutReturn);
     yield this.prankcall.send(this.send);
     this.actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
   });
