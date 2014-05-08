@@ -52,7 +52,7 @@ describe('Prankcall', function(testDone) {
   });
 
   it('should call #send until #receive returns false', function *() {
-    this.prankcall.receive(this.receive);
+    this.prankcall.recv(this.receive);
     yield this.prankcall.send(this.send);
     this.actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
@@ -63,7 +63,7 @@ describe('Prankcall', function(testDone) {
   });
 
   it('should call #send only once if custom #receive returns undefined', function *() {
-    this.prankcall.receive(this.receiveWithoutReturn);
+    this.prankcall.recv(this.receiveWithoutReturn);
     yield this.prankcall.send(this.send);
     this.actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
   });
