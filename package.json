@@ -1,7 +1,6 @@
 {
   "name": "prankcall",
   "description": "Call a generator with backoff and other customization",
-  "private": true,
   "version": "0.1.0",
   "main": "index.js",
   "keywords": [
