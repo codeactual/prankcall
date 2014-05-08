@@ -20,15 +20,17 @@ describe('Prankcall', function(testDone) {
       yield 'make jshint happy';
     };
 
+    this.sleepTime = 1;
+
     this.prankcall = T.prankcall.create();
-    this.prankcall.set('sleep', 1);
+    this.prankcall.set('sleep', this.sleepTime);
 
     this.sendSpy = this.spy();
 
     // Stand-in for something async like an HTTP request
     this.send = function *() {
       test.sendSpy();
-      yield sleep(1);
+      yield sleep(test.sleepTime);
       return test.expectedCallReturn[test.recvCount];
     };
 
@@ -37,7 +39,7 @@ describe('Prankcall', function(testDone) {
 
     // Stand-in for something async, ex. write `this.send` results to DB
     this.recv = function *(callReturn) {
-      yield sleep(1);
+      yield sleep(test.sleepTime);
       test.actualCallReturn.push(callReturn);
       return test.recvCount++ < test.expectedCallReturn.length - 1;
     };
@@ -45,7 +47,7 @@ describe('Prankcall', function(testDone) {
     // To verify devs can omit the final `return` safely (no infinite loop)
     this.recvWithoutReturn = function *(callReturn) {
       test.actualCallReturn.push(callReturn);
-      yield sleep(1);
+      yield sleep(test.sleepTime);
     };
 
     // Cursor used to read `this.expectedCallReturn` one element at a time
@@ -85,6 +87,7 @@ describe('Prankcall', function(testDone) {
     function onCall(stats) {
       actualStats = stats;
     }
+
     this.prankcall.on('call', onCall);
 
     yield this.prankcall.send(this.send);
@@ -149,20 +152,6 @@ describe('Prankcall', function(testDone) {
       remainRetries: 0,
       totalRetries: 3
     });
-  });
-
-  it.skip('should emit event: sleep', function *() {
-    // Payload should include
-    // - attempt #
-    // - sleep duration
-    yield true;
-  });
-
-  it.skip('should emit event: fail', function *() {
-    // Payload should include
-    // - attempt #
-    // - sleep duration
-    yield true;
   });
 
   it.skip('should recover from sparse #send exceptions', function *() {
