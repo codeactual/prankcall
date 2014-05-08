@@ -58,9 +58,6 @@ co(function *() {
   }
 
   var prankcall = require('prankcall').create();
-  prankcall.on('retry', function() {
-    console.error('retry', arguments);
-  });
   yield prankcall
     .sleep(3600 * 1000)
     .retry({retries: 3, randomize: true})
