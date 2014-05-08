@@ -8,7 +8,10 @@ _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 - <a name="toc_exportscreate"></a>[exports.create](#exportscreate)
 - <a name="toc_exportsextendext"></a>[exports.extend](#exportsextendext)
 - <a name="toc_prankcall"></a>[Prankcall](#prankcall)
-- <a name="toc_prankcallprototypesend"></a><a name="toc_prankcallprototype"></a>[Prankcall.prototype.send](#prankcallprototypesend)
+- <a name="toc_prankcallprototyperecv"></a><a name="toc_prankcallprototype"></a>[Prankcall.prototype.recv](#prankcallprototyperecv)
+- <a name="toc_prankcallprototyperetryoptions"></a>[Prankcall.prototype.retry](#prankcallprototyperetryoptions)
+- <a name="toc_prankcallprototypesleepms"></a>[Prankcall.prototype.sleep](#prankcallprototypesleepms)
+- <a name="toc_prankcallprototypesend"></a>[Prankcall.prototype.send](#prankcallprototypesend)
 - <a name="toc_prankcallprototypecalctimeouts"></a>[Prankcall.prototype.calcTimeouts](#prankcallprototypecalctimeouts)
 - <a name="toc_prankcalldefaultreceive"></a>[Prankcall.defaultReceive](#prankcalldefaultreceive)
 - <a name="toc_prankcallbackoff"></a>[Prankcall.backoff](#prankcallbackoff)
@@ -86,10 +89,62 @@ yield prankcall.recv(recv).send(send);
 **See:**
 
 - [tim-kos/node-retry](https://github.com/tim-kos/node-retry/#api)
+- Events docs/Events.md
 
 <sub>Go: [TOC](#tableofcontents)</sub>
 
 <a name="prankcallprototype"></a>
+
+# Prankcall.prototype.recv(*})
+
+> Define a generator to receive the return values from the generator
+passed to [Prankcall.prototype.send](#prankcallprototypesend).
+
+- Ex. to implement pagination by inspecting JSON responses from HTTP requests
+  and then deciding whether to `send` should run again to fetch the next page.
+  `recv` can signal `send` to continue/stop its loop by returning `true/false`.
+
+**Parameters:**
+
+- `{function} *}` recv
+
+**Return:**
+
+`{object}` this
+
+<sub>Go: [TOC](#tableofcontents) | [Prankcall.prototype](#toc_prankcallprototype)</sub>
+
+# Prankcall.prototype.retry(options)
+
+> Customize `retry` timeout options for backoff in `send`.
+
+**Parameters:**
+
+- `{object} options` Any valid `retry` timeout pairs
+
+**Return:**
+
+`{object}` this
+
+**See:**
+
+- [tim-kos/node-retry](https://github.com/tim-kos/node-retry/#api)
+
+<sub>Go: [TOC](#tableofcontents) | [Prankcall.prototype](#toc_prankcallprototype)</sub>
+
+# Prankcall.prototype.sleep(ms)
+
+> Sleep for a custom duration after each `send` iteration.
+
+**Parameters:**
+
+- `{number} ms`
+
+**Return:**
+
+`{object}` this
+
+<sub>Go: [TOC](#tableofcontents) | [Prankcall.prototype](#toc_prankcallprototype)</sub>
 
 # Prankcall.prototype.send(*})
 
