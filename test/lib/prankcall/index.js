@@ -22,6 +22,9 @@ describe('Prankcall', function(testDone) {
     };
 
     this.sleepTime = 1;
+    this.fakeAsyncDelay = 3;
+
+    this.defaultReceiveSpy = this.spy(T.prankcall.Prankcall, 'defaultReceive');
 
     this.prankcall = T.prankcall.create();
     this.prankcall.set('sleep', this.sleepTime);
@@ -31,7 +34,7 @@ describe('Prankcall', function(testDone) {
     // Stand-in for something async like an HTTP request
     this.send = function *() {
       test.sendSpy();
-      yield sleep(test.sleepTime);
+      yield sleep(test.fakeAsyncDelay);
       return test.expectedCallReturn[test.recvCount];
     };
 
@@ -40,7 +43,7 @@ describe('Prankcall', function(testDone) {
 
     // Stand-in for something async, ex. write `this.send` results to DB
     this.recv = function *(callReturn) {
-      yield sleep(test.sleepTime);
+      yield sleep(test.fakeAsyncDelay);
       test.actualCallReturn.push(callReturn);
       return test.recvCount++ < test.expectedCallReturn.length - 1;
     };
@@ -48,7 +51,7 @@ describe('Prankcall', function(testDone) {
     // To verify devs can omit the final `return` safely (no infinite loop)
     this.recvWithoutReturn = function *(callReturn) {
       test.actualCallReturn.push(callReturn);
-      yield sleep(test.sleepTime);
+      yield sleep(test.fakeAsyncDelay);
     };
 
     // Cursor used to read `this.expectedCallReturn` one element at a time
@@ -63,7 +66,8 @@ describe('Prankcall', function(testDone) {
 
   it('should call #send only once if using default #recv', function *() {
     yield this.prankcall.send(this.send);
-    this.sendSpy.should.have.been.called.once;
+    this.sendSpy.should.have.been.calledOnce;
+    this.defaultReceiveSpy.should.have.been.calledOnce;
   });
 
   it('should call #send only once if custom #recv returns undefined', function *() {
@@ -212,12 +216,46 @@ describe('Prankcall', function(testDone) {
     spy.should.have.been.calledWithExactly(custom);
   });
 
-  it.skip('should use default sleep', function *() {
-    yield true;
+  it('should use default sleep time', function *() {
+    var spy = this.spy(GLOBAL, 'setTimeout');
+    this.prankcall.recv(this.recv);
+    yield this.prankcall.send(this.send);
+    spy.args[0][1].should.equal(this.fakeAsyncDelay);
+    spy.args[1][1].should.equal(this.fakeAsyncDelay);
+    spy.args[2][1].should.equal(this.sleepTime);
+    spy.args[3][1].should.equal(this.fakeAsyncDelay);
+    spy.args[4][1].should.equal(this.fakeAsyncDelay);
+    spy.args[5][1].should.equal(this.sleepTime);
+    spy.args[6][1].should.equal(this.fakeAsyncDelay);
+    spy.args[7][1].should.equal(this.fakeAsyncDelay);
   });
 
-  it.skip('should use custom sleep', function *() {
-    yield true;
+  it('should use custom sleep time', function *() {
+    var spy = this.spy(GLOBAL, 'setTimeout');
+    var custom = 33;
+    this.prankcall.sleep(custom);
+    this.prankcall.recv(this.recv);
+    yield this.prankcall.send(this.send);
+    spy.args[0][1].should.equal(this.fakeAsyncDelay); // send
+    spy.args[1][1].should.equal(this.fakeAsyncDelay); // recv
+    spy.args[2][1].should.equal(custom);              // sleep
+    spy.args[3][1].should.equal(this.fakeAsyncDelay); // send
+    spy.args[4][1].should.equal(this.fakeAsyncDelay); // recv
+    spy.args[5][1].should.equal(custom);              // sleep
+    spy.args[6][1].should.equal(this.fakeAsyncDelay); // send
+    spy.args[7][1].should.equal(this.fakeAsyncDelay); // recv
+  });
+
+  it('should perform sleep', function() {
+    var clock = this.sandbox.useFakeTimers();
+    var ms = 86400;
+    var thunk = sleep(ms);
+    var spy = this.spy();
+    thunk(spy);
+    clock.tick(86399);
+    spy.should.not.have.been.called;
+    clock.tick(1);
+    spy.should.have.been.called;
   });
 });
 
