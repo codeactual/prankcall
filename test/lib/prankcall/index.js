@@ -1,5 +1,6 @@
 var T = require('../..');
-var sleep = T.prankcall.Prankcall.sleep;
+var Prankcall = T.prankcall.Prankcall;
+var sleep = Prankcall.sleep;
 var retry = require('retry');
 
 describe('Prankcall', function(testDone) {
@@ -24,7 +25,7 @@ describe('Prankcall', function(testDone) {
     this.sleepTime = 1;
     this.fakeAsyncDelay = 3;
 
-    this.defaultReceiveSpy = this.spy(T.prankcall.Prankcall, 'defaultReceive');
+    this.defaultReceiveSpy = this.spy(Prankcall, 'defaultReceive');
 
     this.prankcall = T.prankcall.create();
     this.prankcall.set('sleep', this.sleepTime);
@@ -56,6 +57,12 @@ describe('Prankcall', function(testDone) {
 
     // Cursor used to read `this.expectedCallReturn` one element at a time
     this.recvCount = 0;
+
+    this.useFakeBackoff = function() {
+      test.stub(Prankcall, 'backoff', function() {
+        return Prankcall.noOpCallback;
+      });
+    };
   });
 
   it('should call #send until #recv returns false', function *() {
@@ -77,6 +84,8 @@ describe('Prankcall', function(testDone) {
   });
 
   it('should propagate #send exception if retries exhausted', function *() {
+    this.useFakeBackoff();
+
     var actual;
     try {
       yield this.prankcall.send(this.sendWithError);
@@ -118,6 +127,8 @@ describe('Prankcall', function(testDone) {
   });
 
   it('should emit event: retry', function *() {
+    this.useFakeBackoff();
+
     var actualDetails = [];
 
     function onRetry(details) {
@@ -160,6 +171,8 @@ describe('Prankcall', function(testDone) {
   });
 
   it('should recover from sparse #send exceptions', function *() {
+    this.useFakeBackoff();
+
     var test = this;
     var successSequence = [true, false, false, true, false, false, true];
     var actualRetryDetails = [];
@@ -258,5 +271,3 @@ describe('Prankcall', function(testDone) {
     spy.should.have.been.called;
   });
 });
-
-function noOp() { return function(done) { done(); }; }

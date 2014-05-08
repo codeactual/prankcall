@@ -11,6 +11,7 @@ _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 - <a name="toc_prankcallprototypesend"></a><a name="toc_prankcallprototype"></a>[Prankcall.prototype.send](#prankcallprototypesend)
 - <a name="toc_prankcallprototypecalctimeouts"></a>[Prankcall.prototype.calcTimeouts](#prankcallprototypecalctimeouts)
 - <a name="toc_prankcalldefaultreceive"></a>[Prankcall.defaultReceive](#prankcalldefaultreceive)
+- <a name="toc_prankcallbackoff"></a>[Prankcall.backoff](#prankcallbackoff)
 
 <a name="exports"></a>
 
@@ -118,6 +119,12 @@ yield prankcall.recv(recv).send(send);
 
 > Err on the side of halting the generator after one call instead of
 unexpectedly running it forever.
+
+<sub>Go: [TOC](#tableofcontents) | [Prankcall](#toc_prankcall)</sub>
+
+# Prankcall.backoff()
+
+> Separate from [Prankcall](#prankcall).sleep to allow separate test doubles.
 
 <sub>Go: [TOC](#tableofcontents) | [Prankcall](#toc_prankcall)</sub>
 
