@@ -154,11 +154,31 @@ describe('Prankcall', function(testDone) {
     });
   });
 
-  it.skip('should recover from sparse #send exceptions', function *() {
+  it('should recover from sparse #send exceptions', function *() {
+    var test = this;
+    var successSequence = [true, false, false, true, false, false, true];
+    var actualRetryDetails = [];
+
+    function onRetry(details) {
+      actualRetryDetails.push(details);
+    }
+
+    function *send() {
+      if (!successSequence.shift()) {
+        throw test.sendErr;
+      }
+      yield sleep(test.sleepTime);
+      return test.expectedCallReturn[test.recvCount];
+    }
+
+    this.prankcall.on('retry', onRetry);
+    this.prankcall.recv(this.recv);
     this.prankcall.retry({retries: 3});
-    var successSequence = [true, false, false, true, false, true];
-    yield this.prankcall.send(this.sendWithError);
-    this.actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
+
+    yield this.prankcall.send(send);
+
+    actualRetryDetails.length.should.equal(4);
+    this.actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
 
   it.skip('should use default retry options', function *() {
