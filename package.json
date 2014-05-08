@@ -1,6 +1,6 @@
 {
   "name": "prankcall",
-  "description": "Call a function periodically with backoff and other customization",
+  "description": "Call a generator with backoff and other customization",
   "private": true,
   "version": "0.1.0",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "retry",
     "repeater",
     "pagination",
-    "generator",
+    "function",
     "yield",
     "es6",
     "harmony",

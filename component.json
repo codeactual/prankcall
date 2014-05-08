@@ -1,13 +1,13 @@
 {
   "name": "prankcall",
   "repo": "codeactual/prankcall",
-  "description": "Call a function periodically with backoff and other customization",
+  "description": "Call a generator with backoff and other customization",
   "version": "0.1.0",
   "keywords": [
     "retry",
     "repeater",
     "pagination",
-    "generator",
+    "function",
     "yield",
     "es6",
     "harmony",

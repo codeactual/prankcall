@@ -44,6 +44,18 @@
             };
         };
     });
+    require.register("codeactual~extend@0.1.0", function(exports, module) {
+        module.exports = function extend(object) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            for (var i = 0, source; source = args[i]; i++) {
+                if (!source) continue;
+                for (var property in source) {
+                    object[property] = source[property];
+                }
+            }
+            return object;
+        };
+    });
     require.register("visionmedia~configurable.js@f87ca5f", function(exports, module) {
         module.exports = function(obj) {
             obj.settings = {};
@@ -73,18 +85,6 @@
                 return !this.get(name);
             };
             return obj;
-        };
-    });
-    require.register("codeactual~extend@0.1.0", function(exports, module) {
-        module.exports = function extend(object) {
-            var args = Array.prototype.slice.call(arguments, 1);
-            for (var i = 0, source; source = args[i]; i++) {
-                if (!source) continue;
-                for (var property in source) {
-                    object[property] = source[property];
-                }
-            }
-            return object;
         };
     });
     require.register("prankcall", function(exports, module) {
