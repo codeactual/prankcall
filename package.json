@@ -4,7 +4,20 @@
   "private": true,
   "version": "0.1.0",
   "main": "index.js",
-  "keywords": [],
+  "keywords": [
+    "retry",
+    "repeater",
+    "pagination",
+    "generator",
+    "yield",
+    "es6",
+    "timeout",
+    "sleep",
+    "backoff",
+    "exponential",
+    "producer",
+    "consumer"
+  ],
   "contributors": [
     {
       "name": "David Smith",
