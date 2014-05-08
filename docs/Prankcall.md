@@ -89,7 +89,7 @@ yield prankcall.recv(recv).send(send);
 **See:**
 
 - [tim-kos/node-retry](https://github.com/tim-kos/node-retry/#api)
-- Events docs/Events.md
+- [Events](https://github.com/codeactual/prankcall/blob/master/docs/events.md)
 
 <sub>Go: [TOC](#tableofcontents)</sub>
 
