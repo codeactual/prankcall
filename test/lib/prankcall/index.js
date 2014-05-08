@@ -1,5 +1,6 @@
 var T = require('../..');
 var sleep = T.prankcall.Prankcall.sleep;
+var retry = require('retry');
 
 describe('Prankcall', function(testDone) {
   'use strict';
@@ -181,24 +182,34 @@ describe('Prankcall', function(testDone) {
     this.actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
 
-  it.skip('should use default retry options', function *() {
-    yield true;
+  it('should use default retry options', function *() {
+    var spy = this.spy(retry, 'timeouts');
+
+    yield this.prankcall.send(this.send);
+
+    spy.should.have.been.calledWithExactly({});
   });
 
-  it.skip('should reset retries after #send success', function *() {
-    // Set max failures to 3, failure a total of 4 times in run:
-    // - ex. success + 2 failures + success + 2 failures + success
-    // Verify collected call return values
-    // Use events to collect retry states
-    yield true;
+  it('should produce default timeout durations', function() {
+    this.prankcall.calcTimeouts().should.deep.equal(
+      [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000, 512000]
+    );
   });
 
-  it.skip('should use default retry options', function *() {
-    yield true;
-  });
+  it('should use custom retry options', function *() {
+    var spy = this.spy(retry, 'timeouts');
 
-  it.skip('should use custom retry options', function *() {
-    yield true;
+    var custom = {
+      timeout: 101,
+      retries: 5,
+      factor: 2.1,
+      minTimeout: 2000,
+      maxTimeout: 60000
+    };
+    this.prankcall.retry(custom);
+    yield this.prankcall.send(this.send);
+
+    spy.should.have.been.calledWithExactly(custom);
   });
 
   it.skip('should use default sleep', function *() {

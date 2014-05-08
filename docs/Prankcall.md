@@ -74,6 +74,7 @@ yield prankcall.recv(recv).send(send);
   - `{number} [timeout=2000]`
   - `{number} [retries=10]`
   - `{number} [factor=2]`
+  - `{number} [minTimeout=1000]`
   - `{number} [maxTimeout=Infinity]`
   - `{boolean} [randomize=false]`
 - `{function *} [receive=none]` Optional consumer of each call's return value
