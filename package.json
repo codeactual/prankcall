@@ -51,7 +51,10 @@
     "sinon": "^1.9.1",
     "sinon-chai": "^2.5.0",
     "sinon-doublist": "^0.5.1",
-    "co-mocha": "0.0.2"
+    "co-mocha": "0.0.2",
+    "co-fs": "^1.2.0",
+    "sinon-doublist-fs": "^0.5.1",
+    "co-request": "^0.2.0"
   },
   "scripts": {
     "test": "grunt test"

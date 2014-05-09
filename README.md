@@ -6,7 +6,9 @@ Call a node.js generator with backoff and other customization
 - Call the generator just once or repeatedly based on custom logic
 - Optionally define another generator to receive results
 - Sleep between successful calls
-- Combine with modules like [co](https://github.com/visionmedia/co)
+- Combine with modules like:
+  - [co](https://github.com/visionmedia/co)
+  - [co-request](https://github.com/leukhin/co-request)
 - Observe retry events for logging
 
 [![Build Status](https://travis-ci.org/codeactual/prankcall.png)](https://travis-ci.org/codeactual/prankcall)
