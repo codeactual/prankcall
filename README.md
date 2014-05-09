@@ -46,7 +46,7 @@ co(function *() {
 })();
 ```
 
-See more [examples](blob/master/test/lib/examples.js).
+See more [examples](test/lib/examples.js).
 
 ## Installation
 
