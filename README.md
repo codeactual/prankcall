@@ -31,7 +31,7 @@ function *consumer(dataFromProducer) {
 }
 
 co(function *() {
-  var prankcall = require('./index').create();
+  var prankcall = require('prankcall').create();
   yield prankcall
     .sleep(1500) // Wait 1.5s after each successful `producer` call
     .retry({
