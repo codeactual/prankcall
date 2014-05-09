@@ -11,7 +11,6 @@ describe('Prankcall - Examples', function(testDone) {
 
   beforeEach(function() {
     this.prankcall = T.prankcall.create();
-    this.portlandZip = 97204;
   });
 
   function getWeatherFromYahoo(location) {
@@ -23,26 +22,41 @@ describe('Prankcall - Examples', function(testDone) {
 
   it('should demo single call', function *() {
     var fs = require('co-fs');
-    var filename = '/tmp/weather-latest.json';
     var expectedJson;
-    var producerGenFn = getWeatherFromYahoo(this.portlandZip);
+
+    var filename = '/tmp/weather/latest.json';
+    this.stubTree(filename);
+
+    var producerGenFn = getWeatherFromYahoo(97204);
+
     var consumerGenFn = function *(dataFromProducer) {
       expectedJson = dataFromProducer;
       yield fs.writeFile(filename, dataFromProducer);
     };
+
     yield this.prankcall.recv(consumerGenFn).send(producerGenFn);
+
     (yield fs.readFile(filename)).toString().should.equal(expectedJson);
   });
 
-  it.skip('should demo infinite calls with custom sleep and backoff', function *() {
-    yield this.prankcall.send(this.send);
-  });
+  it('should demo producer dynamically stopped by consumer', function *() {
+    var maxIter = 100;
+    var curIter = 0;
 
-  it.skip('should demo infinite producer-consumer flow', function *() {
-    yield this.prankcall.send(this.send);
-  });
+    function *producer() {
+      yield sleep(0);
+      curIter++;
+      return '';
+    }
 
-  it.skip('should demo consumer ending a flow', function *() {
-    yield this.prankcall.send(this.send);
+    function *consumer() {
+      yield sleep(0);
+      return curIter < maxIter;
+    }
+
+    this.prankcall.sleep(0);
+    yield this.prankcall.recv(consumer).send(producer);
+
+    curIter.should.equal(maxIter);
   });
 });
