@@ -7,64 +7,44 @@ Call a node.js generator with backoff and other customization
 - Optionally define another generator to receive results
 - Sleep between successful calls
 - Combine with modules like [co](https://github.com/visionmedia/co)
+- Observe retry events for logging
 
 [![Build Status](https://travis-ci.org/codeactual/prankcall.png)](https://travis-ci.org/codeactual/prankcall)
 
-## Examples
+## Example
 
-### Call a generator only once
-
-> With default sleep and backoff options
+> Use an async `producer` to generate input for an async `consumer`.
+> `producer` might perform an HTTP request, while `consumer` stores the result in a database, job queue, etc.
 
 ```js
-function *asyncWork() {
-  var data = yield work();
+function *producer() {
+  var data = yield producerWork();
   // ...
   return data;
 }
 
+function *consumer(dataFromProducer) {
+  yield consumerWork(dataFromProducer);
+  return shouldProducerRunAgain(); // {boolean}
+}
+
 co(function *() {
   var prankcall = require('./index').create();
-  yield prankcall.send(asyncWork);
-})();
-```
-
-### Collect hourly search results from an HTTP API and queue processing jobs
-
-> With custom sleep and backoff options
-
-```js
-co(function *() {
-  var pageSize = 20;
-  var offset = 0;
-
-  function buildSearchGenerator(term) {
-    return function *() {
-      var url = buildRequestUrl(term, offset, pageSize);
-      var response = yield request(url);
-      return response.results;
-    };
-  }
-
-  function *queueResultsForProcessing(results) {
-    if (results.length) {
-      yield enqueue(results);
-    }
-
-    offset += pageSize;
-
-    // `false` will stop `send()` iteration
-    return results.length === pageSize;
-  }
-
-  var prankcall = require('prankcall').create();
   yield prankcall
-    .sleep(3600 * 1000)
-    .retry({retries: 3, randomize: true})
-    .recv(queueResultsForProcessing)
-    .send(buildSearchGenerator('#nodejs'));
+    .sleep(1500) // Wait 1.5s after each successful `producer` call
+    .retry({
+      retries: 5,
+      factor: 3,
+      minTimeout: 1 * 1000,
+      maxTimeout: 60 * 1000,
+      randomize: true
+    })
+    .recv(consumer);
+    .send(producer);
 })();
 ```
+
+See more [examples](tree/master/test/lib/examples.js).
 
 ## Installation
 
