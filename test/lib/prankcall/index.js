@@ -270,4 +270,31 @@ describe('Prankcall - Lib', function() {
     clock.tick(1);
     spy.should.have.been.called;
   });
+
+  it('should pass call return values to non-generator #recv', function *() {
+    var test = this;
+    var actualCallReturn = [];
+
+    function notAGenerator(callReturn) {
+      actualCallReturn.push(callReturn);
+      return test.recvCount++ < test.expectedCallReturn.length - 1;
+    }
+
+    this.prankcall.recv(notAGenerator);
+    yield this.prankcall.send(this.send);
+    actualCallReturn.should.deep.equal(this.expectedCallReturn);
+  });
+
+  it('should call #send only once if custom non-generator #recv returns false', function *() {
+    var actualCallReturn = [];
+
+    function notAGenerator(callReturn) {
+      actualCallReturn.push(callReturn);
+      return false;
+    }
+
+    this.prankcall.recv(notAGenerator);
+    yield this.prankcall.send(this.send);
+    actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
+  });
 });

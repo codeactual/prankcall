@@ -12,7 +12,6 @@ _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 - <a name="toc_prankcallprototyperetryoptions"></a>[Prankcall.prototype.retry](#prankcallprototyperetryoptions)
 - <a name="toc_prankcallprototypesleepms"></a>[Prankcall.prototype.sleep](#prankcallprototypesleepms)
 - <a name="toc_prankcallprototypesend"></a>[Prankcall.prototype.send](#prankcallprototypesend)
-- <a name="toc_prankcallprototypecalctimeouts"></a>[Prankcall.prototype.calcTimeouts](#prankcallprototypecalctimeouts)
 - <a name="toc_prankcalldefaultreceive"></a>[Prankcall.defaultReceive](#prankcalldefaultreceive)
 - <a name="toc_prankcallbackoff"></a>[Prankcall.backoff](#prankcallbackoff)
 
@@ -97,8 +96,8 @@ yield prankcall.recv(recv).send(send);
 
 # Prankcall.prototype.recv(*})
 
-> Define a generator to receive the return values from the generator
-passed to [Prankcall.prototype.send](#prankcallprototypesend).
+> Define a generator, or regular function, to receive the return values from
+the generator passed to [Prankcall.prototype.send](#prankcallprototypesend).
 
 - Ex. to implement pagination by inspecting JSON responses from HTTP requests
   and then deciding whether to `send` should run again to fetch the next page.
@@ -106,7 +105,8 @@ passed to [Prankcall.prototype.send](#prankcallprototypesend).
 
 **Parameters:**
 
-- `{function} *}` recv
+- `{function} *}` recv Generator or regular function.
+  - Receives the return value from `send` as the first argument.
 
 **Return:**
 
@@ -157,16 +157,6 @@ passed to [Prankcall.prototype.send](#prankcallprototypesend).
 **Parameters:**
 
 - `{function} *}` sender
-
-<sub>Go: [TOC](#tableofcontents) | [Prankcall.prototype](#toc_prankcallprototype)</sub>
-
-# Prankcall.prototype.calcTimeouts()
-
-> Use `retry` to calculate timeout durations.
-
-**Return:**
-
-`{array}` Ex. `[1000, 2000, 4000, ...]`
 
 <sub>Go: [TOC](#tableofcontents) | [Prankcall.prototype](#toc_prankcallprototype)</sub>
 
