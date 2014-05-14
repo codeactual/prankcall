@@ -2,7 +2,7 @@
   "name": "prankcall",
   "repo": "codeactual/prankcall",
   "description": "Call a node.js generator with backoff and other customization",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "keywords": [
     "retry",
     "repeater",
