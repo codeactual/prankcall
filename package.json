@@ -67,5 +67,10 @@
   "devdir-ci": {
     "version": 1,
     "upstream": false
-  }
+  },
+  "files": [
+    "index.js",
+    "dist",
+    "lib"
+  ]
 }
