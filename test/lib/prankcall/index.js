@@ -1,3 +1,4 @@
+/*eslint func-names: 0, new-cap: 0, no-unused-expressions: 0, no-wrap-func: 0*/
 var T = require('../..');
 var Prankcall = T.prankcall.Prankcall;
 var sleep = Prankcall.sleep;
@@ -62,6 +63,21 @@ describe('Prankcall - Lib', function() {
       test.stub(Prankcall, 'backoff', function() {
         return Prankcall.noOpCallback;
       });
+    };
+
+    this.nonGeneratorMultiIterRecv = function(callReturn) {
+      actualCallReturn.push(callReturn);
+      return test.recvCount++ < test.expectedCallReturn.length - 1;
+    }
+
+    this.nonGeneratorOneIterRecv = function(callReturn) {
+      actualCallReturn.push(callReturn);
+      return false;
+    }
+
+    this.nonGeneratorSend = function() {
+      test.sendSpy();
+      return test.expectedCallReturn[test.recvCount];
     };
   });
 
@@ -272,15 +288,9 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should pass call return values to non-generator #recv', function *() {
-    var test = this;
     var actualCallReturn = [];
 
-    function notAGenerator(callReturn) {
-      actualCallReturn.push(callReturn);
-      return test.recvCount++ < test.expectedCallReturn.length - 1;
-    }
-
-    this.prankcall.recv(notAGenerator);
+    this.prankcall.recv(this.nonGeneratorMultiIterRecv.bind(this));
     yield this.prankcall.send(this.send);
     actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
@@ -288,13 +298,16 @@ describe('Prankcall - Lib', function() {
   it('should call #send only once if custom non-generator #recv returns false', function *() {
     var actualCallReturn = [];
 
-    function notAGenerator(callReturn) {
-      actualCallReturn.push(callReturn);
-      return false;
-    }
-
-    this.prankcall.recv(notAGenerator);
+    this.prankcall.recv(this.recv);
     yield this.prankcall.send(this.send);
     actualCallReturn.should.deep.equal([this.expectedCallReturn[0]]);
+  });
+
+  it('should support non-generator used in #send', function *() {
+    var actualCallReturn = [];
+
+    this.prankcall.recv(this.recv);
+    yield this.prankcall.send(this.nonGeneratorSend.bind(this));
+    actualCallReturn.should.deep.equal(this.expectedCallReturn);
   });
 });
