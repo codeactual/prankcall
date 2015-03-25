@@ -70,7 +70,6 @@
   },
   "files": [
     "index.js",
-    "dist",
     "lib"
   ]
 }
