@@ -1,35 +1,35 @@
-var T = require('..');
-var Prankcall = T.prankcall.Prankcall;
-var sleep = Prankcall.sleep;
-var http = require('http');
-var request = require('co-request');
+/*eslint func-names: 0, new-cap: 0, no-unused-expressions: 0, no-wrap-func: 0*/
+'use strict';
+
+const T = require('..');
+const Prankcall = T.prankcall.Prankcall;
+const sleep = Prankcall.sleep;
+const request = require('co-request');
 
 require('sinon-doublist-fs')('mocha');
 
-describe('Prankcall - Examples', function(testDone) {
-  'use strict';
-
+describe('Prankcall - Examples', function() {
   beforeEach(function() {
     this.prankcall = T.prankcall.create();
   });
 
   function getWeatherFromYahoo(location) {
     return function *getWeatherFromYahooGen() {
-      var response = yield request('http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20location%20%3D%20' + location + '&format=json');
+      const response = yield request('http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20location%20%3D%20' + location + '&format=json');
       return response.body;
     };
   }
 
   it('should demo single call', function *() {
-    var fs = require('co-fs');
-    var expectedJson;
+    const fs = require('co-fs');
+    let expectedJson;
 
-    var filename = '/tmp/weather/latest.json';
+    const filename = '/tmp/weather/latest.json';
     this.stubTree(filename);
 
-    var producerGenFn = getWeatherFromYahoo(97204);
+    const producerGenFn = getWeatherFromYahoo(97204);
 
-    var consumerGenFn = function *(dataFromProducer) {
+    const consumerGenFn = function *(dataFromProducer) {
       expectedJson = dataFromProducer;
       yield fs.writeFile(filename, dataFromProducer);
     };
@@ -40,8 +40,8 @@ describe('Prankcall - Examples', function(testDone) {
   });
 
   it('should demo producer dynamically stopped by consumer', function *() {
-    var maxIter = 100;
-    var curIter = 0;
+    const maxIter = 100;
+    const curIter = 0;
 
     function *producer() {
       yield sleep(0);

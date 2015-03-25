@@ -1,14 +1,14 @@
 /*eslint func-names: 0, new-cap: 0, no-unused-expressions: 0, no-wrap-func: 0*/
-var T = require('../..');
-var Prankcall = T.prankcall.Prankcall;
-var sleep = Prankcall.sleep;
-var retry = require('retry');
+const T = require('../..');
+const Prankcall = T.prankcall.Prankcall;
+const sleep = Prankcall.sleep;
+const retry = require('retry');
 
 describe('Prankcall - Lib', function() {
   'use strict';
 
   beforeEach(function() {
-    var test = this;
+    const test = this;
 
     // `this.send` will return one element at a time
     this.expectedCallReturn = ['one', 2, {three: true}];
@@ -17,6 +17,7 @@ describe('Prankcall - Lib', function() {
     this.sendErrMsg = 'test send error';
     this.sendErr = new Error(this.sendErrMsg);
     this.sendWithError = function *() {
+      /*eslint no-constant-condition: 0*/
       if (true) { // Hide the `throw` from jshint
         throw test.sendErr;
       }
@@ -66,14 +67,14 @@ describe('Prankcall - Lib', function() {
     };
 
     this.nonGeneratorMultiIterRecv = function(callReturn) {
-      actualCallReturn.push(callReturn);
+      test.actualCallReturn.push(callReturn);
       return test.recvCount++ < test.expectedCallReturn.length - 1;
-    }
+    };
 
     this.nonGeneratorOneIterRecv = function(callReturn) {
-      actualCallReturn.push(callReturn);
+      test.actualCallReturn.push(callReturn);
       return false;
-    }
+    };
 
     this.nonGeneratorSend = function() {
       test.sendSpy();
@@ -102,7 +103,7 @@ describe('Prankcall - Lib', function() {
   it('should propagate #send exception if retries exhausted', function *() {
     this.useFakeBackoff();
 
-    var actual;
+    let actual;
     try {
       yield this.prankcall.send(this.sendWithError);
     } catch (err) {
@@ -112,7 +113,7 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should emit event: call', function *() {
-    var actualStats;
+    let actualStats;
 
     function onCall(stats) {
       actualStats = stats;
@@ -126,8 +127,8 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should emit event: return', function *() {
-    var actualStats;
-    var actualCallReturn;
+    let actualStats;
+    let actualCallReturn;
 
     function onReturn(stats, callReturn) {
       actualStats = stats;
@@ -145,7 +146,7 @@ describe('Prankcall - Lib', function() {
   it('should emit event: retry', function *() {
     this.useFakeBackoff();
 
-    var actualDetails = [];
+    const actualDetails = [];
 
     function onRetry(details) {
       actualDetails.push(details);
@@ -154,7 +155,7 @@ describe('Prankcall - Lib', function() {
     this.prankcall.on('retry', onRetry);
     this.prankcall.retry({retries: 3});
 
-    var caughtErr;
+    let caughtErr;
     try {
       yield this.prankcall.send(this.sendWithError);
     } catch (err) {
@@ -189,9 +190,9 @@ describe('Prankcall - Lib', function() {
   it('should recover from sparse #send exceptions', function *() {
     this.useFakeBackoff();
 
-    var test = this;
-    var successSequence = [true, false, false, true, false, false, true];
-    var actualRetryDetails = [];
+    const test = this;
+    const successSequence = [true, false, false, true, false, false, true];
+    const actualRetryDetails = [];
 
     function onRetry(details) {
       actualRetryDetails.push(details);
@@ -216,7 +217,7 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should use default retry options', function *() {
-    var spy = this.spy(retry, 'timeouts');
+    const spy = this.spy(retry, 'timeouts');
 
     yield this.prankcall.send(this.send);
 
@@ -230,9 +231,9 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should use custom retry options', function *() {
-    var spy = this.spy(retry, 'timeouts');
+    const spy = this.spy(retry, 'timeouts');
 
-    var custom = {
+    const custom = {
       timeout: 101,
       retries: 5,
       factor: 2.1,
@@ -246,7 +247,7 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should use default sleep time', function *() {
-    var spy = this.spy(GLOBAL, 'setTimeout');
+    const spy = this.spy(GLOBAL, 'setTimeout');
     this.prankcall.recv(this.recv);
     yield this.prankcall.send(this.send);
     spy.args[0][1].should.equal(this.fakeAsyncDelay);
@@ -260,8 +261,8 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should use custom sleep time', function *() {
-    var spy = this.spy(GLOBAL, 'setTimeout');
-    var custom = 33;
+    const spy = this.spy(GLOBAL, 'setTimeout');
+    const custom = 33;
     this.prankcall.sleep(custom);
     this.prankcall.recv(this.recv);
     yield this.prankcall.send(this.send);
@@ -276,10 +277,10 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should perform sleep', function() {
-    var clock = this.sandbox.useFakeTimers();
-    var ms = 86400;
-    var thunk = sleep(ms);
-    var spy = this.spy();
+    const clock = this.sandbox.useFakeTimers();
+    const ms = 86400;
+    const thunk = sleep(ms);
+    const spy = this.spy();
     thunk(spy);
     clock.tick(86399);
     spy.should.not.have.been.called;
@@ -288,7 +289,7 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should pass call return values to non-generator #recv', function *() {
-    var actualCallReturn = [];
+    const actualCallReturn = [];
 
     this.prankcall.recv(this.nonGeneratorMultiIterRecv.bind(this));
     yield this.prankcall.send(this.send);
@@ -296,7 +297,7 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should call #send only once if custom non-generator #recv returns false', function *() {
-    var actualCallReturn = [];
+    const actualCallReturn = [];
 
     this.prankcall.recv(this.recv);
     yield this.prankcall.send(this.send);
@@ -304,7 +305,7 @@ describe('Prankcall - Lib', function() {
   });
 
   it('should support non-generator used in #send', function *() {
-    var actualCallReturn = [];
+    const actualCallReturn = [];
 
     this.prankcall.recv(this.recv);
     yield this.prankcall.send(this.nonGeneratorSend.bind(this));

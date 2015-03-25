@@ -54,14 +54,14 @@ _Source: [lib/prankcall/index.js](../lib/prankcall/index.js)_
 **Usage:**
 
 ```js
-var prankcall = require('prankcall').create();
+const prankcall = require('prankcall').create();
 prankcall.retry({retries: 3}); // `retry` options
 
-var send = function *() {
+const send = function *() {
    // ... async read ...
    return data;
 };
-var recv = function *() {
+const recv = function *() {
    // ... async read ...
    return true; // keep reading
 };

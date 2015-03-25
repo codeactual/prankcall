@@ -1,3 +1,14 @@
+# 0.2.0
+
+## breaking
+
+- refactor(node): Migrate to ES6 features like `let` and `const`
+  - Switch to `iojs` as only build target
+
+## non-breaking
+
+- refactor(extend): from migrate [assimlate](https://github.com/pluma0/assimilate) to [extend](https://github.com/justmoon/node-extend/)
+
 # 0.1.3
 
 - refactor(lib,test): remove isGeneratorFunction, works w/out those checks
