@@ -17,11 +17,7 @@ describe('Prankcall - Lib', function() {
     this.sendErrMsg = 'test send error';
     this.sendErr = new Error(this.sendErrMsg);
     this.sendWithError = function *() {
-      /*eslint no-constant-condition: 0*/
-      if (true) { // Hide the `throw` from jshint
-        throw test.sendErr;
-      }
-      yield 'make jshint happy';
+      throw test.sendErr;
     };
 
     this.sleepTime = 1;
