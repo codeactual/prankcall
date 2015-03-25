@@ -52,6 +52,8 @@ See more [examples](test/lib/examples.js).
 
 ### [NPM](https://npmjs.org/package/prankcall)
 
+[![NPM](https://nodei.co/npm/prankcall.png?downloads=true)](https://nodei.co/npm/prankcall/)
+
     npm install prankcall
 
 ## API
