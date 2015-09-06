@@ -41,7 +41,7 @@ describe('Prankcall - Examples', function() {
 
   it('should demo producer dynamically stopped by consumer', function *() {
     const maxIter = 100;
-    const curIter = 0;
+    let curIter = 0;
 
     function *producer() {
       yield sleep(0);
