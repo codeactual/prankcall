@@ -1,3 +1,7 @@
+# 0.2.1
+
+- fix(es6): const violations
+
 # 0.2.0
 
 ## breaking
